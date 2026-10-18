@@ -3,8 +3,8 @@ import colors from 'colors';
 import { exit  } from 'node:process'
 
 export const connectDB = async () => {
-
     try {
+        // Conecta con la base de datos
         const {connection} = await mongoose.connect(process.env.DATABASE_URL)
         const url = `${connection.host}:${connection.port}`
         console.log(colors.magenta.bold(`MongoDB conectado en: ${url}`));
