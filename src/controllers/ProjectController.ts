@@ -8,7 +8,7 @@ export class ProjectController {
 
         // Crea un nuevo proyecto
         const project = new Project(req.body)
-        
+
         try {
             // Guarda el nuevo proyecto en la base de datos
             await project.save();
@@ -23,7 +23,7 @@ export class ProjectController {
     static getAllProjects = async (req: Request, res: Response) => {
         try {
             // Busca todos los proyectos en la base de datos
-            const projects = await Project.find();
+            const projects = await Project.find().populate('tasks');
             res.json(projects)
         } catch (error) {
             console.log(error)
@@ -46,25 +46,28 @@ export class ProjectController {
             console.log(error)
         }
     }
-    
+
     // Actualiza un proyecto
     static updateProject = async (req: Request, res: Response) => {
         const { id } = req.params;
         try {
             // Busca y actualiza un proyecto por su ID en la base de datos
-            const project = await Project.findByIdAndUpdate(id, req.body);
+            const project = await Project.findById(id);
             // Si no existe el proyecto, retorna un Error 400
             if(!project){
                 const error = new Error('Proyecto no encontrado')
                 return res.status(404).json({ message: error.message })
             }
+            project.clientName = req.body.clientName;
+            project.projectName = req.body.projectName;
+            project.description = req.body.description;
             await project.save()
             res.send('Proyecto Actualizado') // Retorna el proyecto Actualizado
         } catch (error) {
             console.log(error)
         }
     }
-    
+
     // Eliminar un proyecto
     static deleteProject = async (req: Request, res: Response) => {
         const { id } = req.params;
@@ -84,4 +87,3 @@ export class ProjectController {
     }
 
 }
-
